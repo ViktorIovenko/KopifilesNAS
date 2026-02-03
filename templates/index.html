@@ -115,9 +115,11 @@
                 <form method="post" action="{{ url_for('set_src_watch') }}">
                   <button class="secondary small" type="submit">Флэшка</button>
                 </form>
-                <form method="post" action="{{ url_for('pick_src') }}">
-                  <button class="secondary small" type="submit">Выбрать…</button>
-                </form>
+                {% if tk_available %}
+                  <form method="post" action="{{ url_for('pick_src') }}">
+                    <button class="secondary small" type="submit">Выбрать…</button>
+                  </form>
+                {% endif %}
               </div>
             </div>
             <div class="field">
@@ -132,9 +134,11 @@
                 <form method="post" action="{{ url_for('set_dst_foto') }}">
                   <button class="secondary small" type="submit">FOTO</button>
                 </form>
-                <form method="post" action="{{ url_for('pick_dst') }}">
-                  <button class="secondary small" type="submit">Выбрать…</button>
-                </form>
+                {% if tk_available %}
+                  <form method="post" action="{{ url_for('pick_dst') }}">
+                    <button class="secondary small" type="submit">Выбрать…</button>
+                  </form>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -166,9 +170,11 @@
             />
             <button class="secondary" type="submit">Сохранить</button>
             </form>
-            <form method="post" action="{{ url_for('pick_archive') }}">
-              <button class="secondary" type="submit">Выбрать…</button>
-            </form>
+            {% if tk_available %}
+              <form method="post" action="{{ url_for('pick_archive') }}">
+                <button class="secondary" type="submit">Выбрать…</button>
+              </form>
+            {% endif %}
           </div>
 
         

@@ -8,8 +8,14 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
 from flask import Flask, redirect, render_template, url_for
-import tkinter as tk
-from tkinter import filedialog
+try:
+    import tkinter as tk
+    from tkinter import filedialog
+    TK_AVAILABLE = True
+except Exception:
+    tk = None
+    filedialog = None
+    TK_AVAILABLE = False
 
 from bot import load_env_file, send_telegram_message
 
@@ -318,6 +324,8 @@ def _append_event(kind: str, src: str, dest: Optional[str], ts: str, error: Opti
 _load_events()
 
 def _select_directory(title: str) -> Optional[str]:
+    if not TK_AVAILABLE:
+        return None
     try:
         root = tk.Tk()
         root.withdraw()
@@ -556,6 +564,7 @@ def index():
         manual_mode=manual_mode,
         manual_formats=_active_formats(flash_info),
         events=_events,
+        tk_available=TK_AVAILABLE,
     )
 
 @app.get("/status")
