@@ -142,6 +142,31 @@
               </div>
             </div>
           </div>
+        {% if manual_mode %}
+          <div class="inline-form" style="margin-top: 10px;">
+            <form method="post" action="{{ url_for('set_manual_paths') }}">
+              <label class="toggle-label" for="manual_src_input">Источник (вручную)</label>
+              <input
+                id="manual_src_input"
+                class="text-input"
+                type="text"
+                name="manual_src"
+                placeholder="Укажите путь"
+                value="{{ manual_src_override or '' }}"
+              />
+              <label class="toggle-label" for="manual_dst_input">Назначение (вручную)</label>
+              <input
+                id="manual_dst_input"
+                class="text-input"
+                type="text"
+                name="manual_dst"
+                placeholder="Укажите путь"
+                value="{{ manual_dst_override or '' }}"
+              />
+              <button class="secondary" type="submit">Сохранить</button>
+            </form>
+          </div>
+        {% endif %}
 
         <div class="badges">
           <div class="badge">Всего файлов: {{ counts.total if counts.total is not none else "-" }}</div>

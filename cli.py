@@ -25,10 +25,10 @@ from PIL import ExifTags, Image
 app = Flask(__name__)
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-WATCH_PATH = r"\\Vittorio\Dev1Partition1"
-DRONE_DEST = r"\\Vittorio\DRONE"
-POCKET_DEST = r"\\Vittorio\POCKET"
-FOTO_DEST = r"\\Vittorio\FOTO"
+WATCH_PATH = r"\\share\\external"
+DRONE_DEST = r"\\share\\CACHEDEV3_DATA\\DRONE"
+POCKET_DEST = r"\\share\\CACHEDEV3_DATA\\POCKET"
+FOTO_DEST = r"\\share\\CACHEDEV3_DATA\\FOTO"
 EVENTS_PATH = os.path.join(BASE_DIR, "copy_events.json")
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 manual_mode: bool = False
@@ -565,6 +565,8 @@ def index():
         manual_formats=_active_formats(flash_info),
         events=_events,
         tk_available=TK_AVAILABLE,
+        manual_src_override=manual_src_override,
+        manual_dst_override=manual_dst_override,
     )
 
 @app.get("/status")
@@ -647,6 +649,18 @@ def set_archive_path():
 
     value = (request.form.get("archive_path") or "").strip()
     archive_path_override = value or None
+    return redirect(url_for("index"))
+
+
+@app.post("/set-manual-paths")
+def set_manual_paths():
+    global manual_src_override, manual_dst_override
+    from flask import request
+
+    src = (request.form.get("manual_src") or "").strip()
+    dst = (request.form.get("manual_dst") or "").strip()
+    manual_src_override = src or None
+    manual_dst_override = dst or None
     return redirect(url_for("index"))
 
 @app.post("/toggle-manual")
