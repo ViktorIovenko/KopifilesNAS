@@ -1,0 +1,7 @@
+﻿geographiclib==2.0
+geopy==2.4.1
+numpy==1.26.4
+pillow==11.3.0
+reverse_geocoder==1.5.1
+scipy==1.11.4
+Flask==3.0.2

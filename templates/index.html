@@ -1,0 +1,250 @@
+﻿<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KopirNAS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div>
+          <h1>KopirNAS</h1>
+          <p>Управление копированием и статус выполнения</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="card">
+        <h2>Носитель</h2>
+        <div class="grid">
+          <div class="field">
+            <label>Путь</label>
+            <code id="watch-path">{{ watch_path }}</code>
+          </div>
+          <div class="field">
+            <label>Статус</label>
+            {% if flash_info.present %}
+              <span class="status" id="flash-status">Флэшка обнаружена</span>
+            {% else %}
+              <span class="status stopped" id="flash-status">Флэшка не обнаружена</span>
+            {% endif %}
+          </div>
+          <div class="field">
+            <label>Тип</label>
+            <code id="flash-kind">{{ flash_info.kind or "-" }}</code>
+          </div>
+          <div class="field">
+            <label>Авто назначение</label>
+            <code id="auto-dest">{{ auto_dest or "-" }}</code>
+          </div>
+        </div>
+
+        <div class="badges">
+          <div class="badge">Всего файлов: <span id="flash-total">{{ flash_info.total_files if flash_info.total_files is not none else "-" }}</span></div>
+          <div class="badge">Изображения: <span id="flash-images">{{ flash_info.image_files if flash_info.image_files is not none else "-" }}</span></div>
+          <div class="badge">Видео: <span id="flash-videos">{{ flash_info.video_files if flash_info.video_files is not none else "-" }}</span></div>
+        </div>
+
+        {% if flash_info.camera_make or flash_info.camera_model or flash_info.camera_serial %}
+          <div class="meta" style="margin-top: 8px;" id="flash-camera">
+            Камера:
+            {{ flash_info.camera_make or "" }}
+            {{ flash_info.camera_model or "" }}
+            {% if flash_info.camera_serial %}(S/N {{ flash_info.camera_serial }}){% endif %}
+          </div>
+        {% endif %}
+
+        {% if flash_info.present %}
+          <form method="post" action="{{ url_for('set_formats') }}" class="inline-form" id="formats-form">
+            <span class="toggle-label">Форматы</span>
+            {% if flash_info.ext_counts %}
+              <div class="chips">
+                {% for ext, count in flash_info.ext_counts.items()|sort %}
+                  <label class="chip">
+                    <input
+                      type="checkbox"
+                      name="formats"
+                      value="{{ ext }}"
+                      {% if ext in manual_formats %}checked{% endif %}
+                    />
+                    {{ ext }} ({{ count }})
+                  </label>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="meta">Форматы не найдены.</div>
+            {% endif %}
+          </form>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Параметры копирования</h2>
+        <form method="post" action="{{ url_for('toggle_manual') }}" class="toggle">
+          <span class="toggle-label">Ручной режим</span>
+          <label class="switch">
+            <input id="manual-toggle" type="checkbox" {% if manual_mode %}checked{% endif %} />
+            <span class="slider"></span>
+          </label>
+          <span id="manual-toggle-label" class="meta">{{ "Включен" if manual_mode else "Выключен" }}</span>
+        </form>
+
+        <div class="grid">
+          <div class="field">
+            <label>Источник</label>
+            <code>{{ copy_config.src or watch_path }}</code>
+          </div>
+          <div class="field">
+            <label>Назначение</label>
+            <code>{{ copy_config.dst or auto_dest or "-" }}</code>
+          </div>
+          <div class="field">
+            <label>Архив перемещений</label>
+            <code>{{ archive_path or "-" }}</code>
+          </div>
+        </div>
+
+        <div id="manual-controls" class="grid" style="margin-top: 10px; {% if not manual_mode %}display: none;{% endif %}">
+            <div class="field">
+              <label>Источник — выбор</label>
+              <div class="button-row">
+                <form method="post" action="{{ url_for('set_src_watch') }}">
+                  <button class="secondary small" type="submit">Флэшка</button>
+                </form>
+                <form method="post" action="{{ url_for('pick_src') }}">
+                  <button class="secondary small" type="submit">Выбрать…</button>
+                </form>
+              </div>
+            </div>
+            <div class="field">
+              <label>Назначение — выбор</label>
+              <div class="button-row">
+                <form method="post" action="{{ url_for('set_dst_drone') }}">
+                  <button class="secondary small" type="submit">DRONE</button>
+                </form>
+                <form method="post" action="{{ url_for('set_dst_pocket') }}">
+                  <button class="secondary small" type="submit">POCKET</button>
+                </form>
+                <form method="post" action="{{ url_for('set_dst_foto') }}">
+                  <button class="secondary small" type="submit">FOTO</button>
+                </form>
+                <form method="post" action="{{ url_for('pick_dst') }}">
+                  <button class="secondary small" type="submit">Выбрать…</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+        <div class="badges">
+          <div class="badge">Всего файлов: {{ counts.total if counts.total is not none else "-" }}</div>
+          <div class="badge">К копированию: {{ counts.candidates if counts.candidates is not none else "-" }}</div>
+        </div>
+
+        <form method="post" action="{{ url_for('toggle_archive') }}" class="toggle">
+          <span class="toggle-label">Архив перемещений</span>
+          <label class="switch">
+            <input id="archive-toggle" type="checkbox" {% if use_archive %}checked{% endif %} />
+            <span class="slider"></span>
+          </label>
+          <span id="archive-toggle-label" class="meta">{{ "Включен" if use_archive else "Выключен" }}</span>
+        </form>
+
+        <div id="archive-controls" class="inline-form" style="{% if not use_archive %}display: none;{% endif %}">
+            <form method="post" action="{{ url_for('set_archive_path') }}">
+            <label class="toggle-label" for="archive_path_input">Путь к архиву</label>
+            <input
+              id="archive_path_input"
+              class="text-input"
+              type="text"
+              name="archive_path"
+              placeholder="Укажите путь"
+              value="{{ archive_path or '' }}"
+            />
+            <button class="secondary" type="submit">Сохранить</button>
+            </form>
+            <form method="post" action="{{ url_for('pick_archive') }}">
+              <button class="secondary" type="submit">Выбрать…</button>
+            </form>
+          </div>
+
+        
+
+        
+
+        <div style="margin-top: 14px;">
+          {% if state.running %}
+            <span class="status" id="copy-status">Выполняется{% if state.stop_requested %} (остановка запрошена){% endif %}</span>
+          {% else %}
+            <span class="status stopped" id="copy-status">Завершено</span>
+          {% endif %}
+        </div>
+        <div class="meta" style="margin-top: 6px;">
+          Скопировано: <span id="progress-copied">{{ state.current_copied if state.current_copied is not none else 0 }}</span>
+          из <span id="progress-total">{{ state.current_total if state.current_total is not none else "-" }}</span>
+        </div>
+
+        <div class="results">
+          <div class="result">
+            <span>Последний запуск</span>
+            <span id="last-started">{{ state.last_started or "-" }}</span>
+          </div>
+          <div class="result">
+            <span>Последнее завершение</span>
+            <span id="last-finished">{{ state.last_finished or "-" }}</span>
+          </div>
+          <div class="result">
+            <span>Время копирования</span>
+            <span id="copy-duration">-</span>
+          </div>
+        </div>
+
+        <div class="results">
+          <div class="result"><span>Обработано</span><span id="last-processed">{{ state.last_result.processed if state.last_result else "-" }}</span></div>
+          <div class="result"><span>Скопировано</span><span id="last-copied">{{ state.last_result.copied if state.last_result else "-" }}</span></div>
+          <div class="result"><span>Пропущено</span><span id="last-skipped">{{ state.last_result.skipped if state.last_result else "-" }}</span></div>
+          <div class="result"><span>Ошибок</span><span id="last-errors">{{ state.last_result.errors if state.last_result else "-" }}</span></div>
+        </div>
+
+        {% if state.last_error %}
+          <div class="warn">{{ state.last_error }}</div>
+        {% endif %}
+
+        <div class="button-row">
+          <form method="post" action="{{ url_for('start_copy') }}">
+            <button id="btn-start" class="primary" type="submit" {% if state.running %}disabled{% endif %}>Начать копирование</button>
+          </form>
+          <form method="post" action="{{ url_for('stop_copy') }}">
+            <button id="btn-stop" class="secondary" type="submit" {% if not state.running %}disabled{% endif %}>Остановить</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Журнал копирования</h2>
+        <div class="meta">Последние операции копирования. Список очищается при новом запуске.</div>
+        <div id="events-list">
+          {% if events %}
+            <ul class="events">
+              {% for item in events %}
+                <li>
+                  <span class="event-ts">{{ item.ts }}</span>
+                  <span class="event-kind">{{ item.kind }}</span>
+                  <span class="event-src">{{ item.src }}</span>
+                  {% if item.dest %}<span class="event-arrow">→</span>{% endif %}
+                  {% if item.dest %}<span class="event-dest">{{ item.dest }}</span>{% endif %}
+                  {% if item.error %}<span class="event-error">({{ item.error }})</span>{% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="meta">Пока нет операций.</div>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
