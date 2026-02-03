@@ -19,10 +19,10 @@ from PIL import ExifTags, Image
 app = Flask(__name__)
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-WATCH_PATH = r"\\Vittorio\Dev1Partition1"
-DRONE_DEST = r"\\Vittorio\DRONE"
-POCKET_DEST = r"\\Vittorio\POCKET"
-FOTO_DEST = r"\\Vittorio\FOTO"
+WATCH_PATH = r"\share\external"
+DRONE_DEST = r"\share\CACHEDEV3_DATA\DRONE"
+POCKET_DEST = r"\share\CACHEDEV3_DATA\POCKET"
+FOTO_DEST = r"\share\CACHEDEV3_DATA\FOTO"
 EVENTS_PATH = os.path.join(BASE_DIR, "copy_events.json")
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 manual_mode: bool = False
