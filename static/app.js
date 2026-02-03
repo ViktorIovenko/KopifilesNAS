@@ -153,6 +153,7 @@ async function fetchStatus() {
     setToggleState("archive-toggle", "archive-toggle-label", data.use_archive);
     setVisible("manual-controls", Boolean(data.manual_mode));
     setVisible("archive-controls", Boolean(data.use_archive));
+    setVisible("manual-paths", Boolean(data.manual_mode));
   } catch (err) {
     // Ignore network errors to avoid UI flicker.
   }
