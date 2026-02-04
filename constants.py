@@ -1,4 +1,4 @@
-﻿WATCH_PATH = r"/mnt/external"
+﻿WATCH_PATH = r"/mnt/disk"
 DRONE_DEST = r"/mnt/drone"
 POCKET_DEST = r"/mnt/pocket"
 FOTO_DEST = r"/mnt/foto"
