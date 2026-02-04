@@ -19,7 +19,9 @@
 
     <main class="container">
       <div class="card">
-        <h2>Носитель</h2>
+        <div class="card-title-row">
+          <h2>Носитель</h2>
+        </div>
         <div class="grid">
           <div class="field">
             <label>Путь</label>
@@ -48,6 +50,9 @@
           <div class="badge">Изображения: <span id="flash-images">{{ flash_info.image_files if flash_info.image_files is not none else "-" }}</span></div>
           <div class="badge">Видео: <span id="flash-videos">{{ flash_info.video_files if flash_info.video_files is not none else "-" }}</span></div>
         </div>
+        <button id="btn-refresh" class="refresh-btn" type="button" title="Обновить">
+          <span class="refresh-icon">↻</span>
+        </button>
 
         {% if flash_info.camera_make or flash_info.camera_model or flash_info.camera_serial %}
           <div class="meta" style="margin-top: 8px;" id="flash-camera">

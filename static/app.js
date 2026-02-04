@@ -268,6 +268,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const refreshBtn = document.getElementById("btn-refresh");
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => {
+      fetchStatus();
+      fetchEvents();
+    });
+  }
+
   document.querySelectorAll("form").forEach((form) => {
     form.addEventListener("submit", () => {
       sessionStorage.setItem("scrollY", String(window.scrollY));

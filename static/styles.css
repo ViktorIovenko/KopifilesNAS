@@ -69,10 +69,18 @@ main {
   padding: 18px 20px;
   margin-bottom: 16px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  position: relative;
 }
 h2 {
   margin: 0 0 12px 0;
   font-size: 18px;
+}
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 .meta {
   color: var(--muted);
@@ -106,6 +114,28 @@ h2 {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
+}
+.refresh-btn {
+  border: 1px solid var(--border);
+  background: rgba(148, 163, 184, 0.08);
+  border-radius: 12px;
+  padding: 8px 12px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+.refresh-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.refresh-icon {
+  font-size: 18px;
+  line-height: 1;
 }
 .badge {
   padding: 6px 10px;
