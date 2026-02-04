@@ -25,10 +25,10 @@ from PIL import ExifTags, Image
 app = Flask(__name__)
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-WATCH_PATH = "/mnt/disk"       # Это твой внешний диск
-DRONE_DEST = "/mnt/drone"      # Папка назначения DRONE
-POCKET_DEST = "/mnt/pocket"    # Папка назначения POCKET
-FOTO_DEST = "/mnt/foto"        # Папка назначения FOTO
+WATCH_PATH = "/mnt/disk"       # Сюда примонтирована твоя флешка/диск
+DRONE_DEST = "/mnt/drone"      # Сюда примонтирована папка DRONE
+POCKET_DEST = "/mnt/pocket"    # Сюда примонтирована папка POCKET
+FOTO_DEST = "/mnt/foto"        # Сюда примонтирована папка FOTO
 EVENTS_PATH = os.path.join(BASE_DIR, "copy_events.json")
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 manual_mode: bool = False
