@@ -1,4 +1,4 @@
-﻿WATCH_PATH = "/mnt/disk"       # Это твой внешний диск
+﻿WATCH_ROOT = "/mnt/external"
 DRONE_DEST = "/mnt/drone"      # Папка назначения DRONE
 POCKET_DEST = "/mnt/pocket"    # Папка назначения POCKET
 FOTO_DEST = "/mnt/foto"    
